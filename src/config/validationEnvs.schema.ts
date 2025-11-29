@@ -9,4 +9,6 @@ export const validationEnvs = Joi.object({
   POSTGRES_PORT: Joi.number().port().required(),
   JWT_SECRET: Joi.string().required(),
   JWT_EXPIRATION_TIME: Joi.string().required(),
+  STRIPE_API_KEY: Joi.string().required(),
+  STRIPE_WEBHOOK_SECRET: Joi.string().required(),
 });

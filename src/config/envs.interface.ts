@@ -7,4 +7,6 @@ export interface Envs {
   POSTGRES_PORT: number;
   JWT_SECRET: string;
   JWT_EXPIRATION_TIME: string;
+  STRIPE_API_KEY: string;
+  STRIPE_WEBHOOK_SECRET: string;
 }

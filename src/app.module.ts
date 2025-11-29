@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validationEnvs } from './config/validationEnvs.schema';
@@ -7,6 +12,8 @@ import { Envs } from './config/envs.interface';
 import { ProductsModule } from './products/products.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { StripeModule } from './stripe/stripe.module';
+import * as express from 'express';
 
 @Module({
   imports: [
@@ -31,8 +38,20 @@ import { AuthModule } from './auth/auth.module';
     ProductsModule,
     UsersModule,
     AuthModule,
+    StripeModule.register(),
   ],
   controllers: [AppController],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(express.json())
+      .exclude({ path: 'stripe/webhook', method: RequestMethod.POST })
+      .forRoutes('*');
+
+    consumer
+      .apply(express.raw({ type: 'application/json' }))
+      .forRoutes({ path: 'stripe/webhook', method: RequestMethod.POST });
+  }
+}
